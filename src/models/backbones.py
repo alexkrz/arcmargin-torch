@@ -23,7 +23,7 @@ class ConvNet(nn.Module):
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
         x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
+        x = self.fc2(x)  # NOTE: Important: Do not use ReLU on the last FC layer!
         # x = self.fc3(x)
         return x
 

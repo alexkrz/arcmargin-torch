@@ -1,10 +1,88 @@
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
+import torch.nn.functional as F
+from jsonargparse import CLI
+from mpl_toolkits.mplot3d import Axes3D
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from src.datamodule import MNISTDataset
+from src.pl_module import ArcMarginModule
 
 
-def main():
+def plot(embeds, labels, fig_path="./example.png"):
+    fig = plt.figure(figsize=(10, 10))
+    ax: Axes3D = fig.add_subplot(111, projection="3d")
+
+    # Create a sphere
+    r = 1
+    pi = np.pi
+    cos = np.cos
+    sin = np.sin
+    phi, theta = np.mgrid[0.0:pi:100j, 0.0 : 2.0 * pi : 100j]
+    x = r * sin(phi) * cos(theta)
+    y = r * sin(phi) * sin(theta)
+    z = r * cos(phi)
+    ax.plot_surface(x, y, z, rstride=1, cstride=1, color="w", alpha=0.3, linewidth=0)
+    ax.scatter(embeds[:, 0], embeds[:, 1], embeds[:, 2], c=labels, s=20)
+
+    ax.set_xlim([-1, 1])
+    ax.set_ylim([-1, 1])
+    ax.set_zlim([-1, 1])
+    ax.set_aspect("equal")
+    plt.tight_layout()
+    plt.savefig(fig_path)
+
+
+def main(
+    chkpt_dir: str = "lightning_logs",
+    header: str = "linear",
+):
     # TODO: Compare embeddings from different Headers on Hypersphere
-    pass
+    chkpt_dir = Path(chkpt_dir) / header  # type: Path
+    chkpt_files = sorted(list(chkpt_dir.rglob("*.ckpt")))
+    chkpt_fp = chkpt_files[-1]
+    print("Chkpt:", str(chkpt_fp))
+
+    # Assign device where code is executed
+    if torch.cuda.is_available():
+        device = torch.device("cuda")  # NVIDIA GPU
+    elif torch.backends.mps.is_available():
+        device = torch.device("mps")  # Apple Neural Engine (MPS)
+    else:
+        device = torch.device("cpu")  # Default to CPU
+    print("Device:", device)
+
+    pl_module = ArcMarginModule.load_from_checkpoint(chkpt_fp)
+    backbone = pl_module.backbone
+
+    dataset = MNISTDataset(split="train")
+    dataloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=8)
+
+    backbone.to(device)
+    backbone.eval()
+
+    feats_list = []
+    labels_list = []
+    for batch in tqdm(dataloader):
+        imgs, labels = batch
+        with torch.no_grad():
+            feats = backbone(imgs.to(device))
+        feats = F.normalize(feats)  # Normalize feats to unit length
+        feats_list.append(feats.cpu().numpy())  # Move feats to CPU and convert to numpy array
+        labels_list.append(labels.cpu().numpy())
+
+    feats = np.concatenate(feats_list)
+    labels = np.concatenate(labels_list)
+
+    print(feats.shape)
+    print(labels.shape)
+
+    plot(feats, labels, fig_path=f"results/{header}.png")
 
 
 if __name__ == "__main__":
-    main()
+    CLI(main)

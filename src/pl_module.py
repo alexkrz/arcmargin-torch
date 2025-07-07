@@ -18,7 +18,7 @@ class ArcMarginModule(L.LightningModule):
         header: str = "linear",
         embed_dim: int = 3,
         n_classes: int = 10,
-        lr: float = 1e-3,
+        lr: float = 1e-4,
     ):
         super().__init__()
         self.save_hyperparameters()
