@@ -84,7 +84,7 @@ if __name__ == "__main__":
         Trainer,
         "trainer",
         default={
-            "precision": "16-mixed",
+            "precision": "32-true",  # Important to use full precision!
             "log_every_n_steps": 50,
             "enable_checkpointing": True,
             "max_epochs": 15,
