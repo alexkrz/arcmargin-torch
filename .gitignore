@@ -1,4 +1,9 @@
 # We do not want to enforce our vscode settings
 /.vscode/
 
+# Artifacts
+__pycache__/
+
 # Other ignores follow here
+/lightning_logs/
+/checkpoints/
