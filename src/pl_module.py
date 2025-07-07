@@ -19,7 +19,6 @@ class ArcMarginModule(L.LightningModule):
         embed_dim: int = 3,
         n_classes: int = 10,
         lr: float = 1e-3,
-        weight_decay: float = 5e-4,
     ):
         super().__init__()
         self.save_hyperparameters()
@@ -48,11 +47,9 @@ class ArcMarginModule(L.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.SGD(
+        optimizer = torch.optim.Adam(
             # Need to optimize over all parameters in the module!
             params=self.parameters(),
             lr=self.hparams.lr,
-            momentum=0.9,
-            weight_decay=self.hparams.weight_decay,
         )
         return optimizer

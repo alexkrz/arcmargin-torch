@@ -6,7 +6,7 @@ import jsonargparse
 import numpy as np
 import torch
 from lightning import Trainer
-from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.callbacks import ModelCheckpoint, TQDMProgressBar
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 
 from src.datamodule import MNISTDatamodule
@@ -45,13 +45,14 @@ def main(parser: jsonargparse.ArgumentParser):
         # every_n_train_steps=50,  # By default lightning only monitors the metric per epoch
         filename="{epoch}_{step}_{loss:.4f}",
     )
+    pbar_callback = TQDMProgressBar(leave=True)
 
     # Configure loggers
     cfg_logger = cfg.trainer.pop("logger")
     tb_logger = TensorBoardLogger(save_dir="lightning_logs", name=pl_module.hparams.header)
     csv_logger = CSVLogger(save_dir="lightning_logs", name=pl_module.hparams.header, version=tb_logger.version)
 
-    trainer = Trainer(**cfg.trainer, callbacks=[cp_callback], logger=[tb_logger, csv_logger])
+    trainer = Trainer(**cfg.trainer, callbacks=[cp_callback, pbar_callback], logger=[tb_logger, csv_logger])
 
     print(f"Writing logs to {trainer.log_dir}")
     Path(trainer.log_dir).mkdir(parents=True)
@@ -69,7 +70,11 @@ if __name__ == "__main__":
     parser = ArgumentParser(parser_mode="omegaconf")
     parser.add_argument("--config", action=ActionConfigFile)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_class_arguments(MNISTDatamodule, "datamodule")
+    parser.add_class_arguments(
+        MNISTDatamodule,
+        "datamodule",
+        default={"batch_size": 64},
+    )
     parser.add_class_arguments(
         ArcMarginModule,
         "pl_module",
@@ -82,7 +87,7 @@ if __name__ == "__main__":
             "precision": "16-mixed",
             "log_every_n_steps": 50,
             "enable_checkpointing": True,
-            "max_epochs": 2,
+            "max_epochs": 15,
         },
     )
 
