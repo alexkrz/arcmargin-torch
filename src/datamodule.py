@@ -1,7 +1,8 @@
 import datasets
+import lightning as L
 import numpy as np
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
 
@@ -34,6 +35,31 @@ class MNISTDataset(Dataset):
             img = self.transform(img)
 
         return img, label
+
+
+class MNISTDatamodule(L.LightningDataModule):
+    def __init__(
+        self,
+        batch_size: int = 16,
+        num_workers: int = 8,
+    ):
+        super().__init__()
+        self.save_hyperparameters()
+
+    def setup(self, stage):
+        print(f"Preparing dataset for stage {stage}..")
+        if stage == "fit":
+            self.dataset = MNISTDataset(split="train")
+        else:
+            self.dataset = None
+
+    def train_dataloader(self):
+        return DataLoader(
+            dataset=self.dataset,
+            batch_size=self.hparams.batch_size,
+            num_workers=self.hparams.num_workers,
+            shuffle=True,
+        )
 
 
 if __name__ == "__main__":
