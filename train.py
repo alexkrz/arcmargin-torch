@@ -74,7 +74,7 @@ if __name__ == "__main__":
         ImageDatamodule,
         "datamodule",
         default={
-            "name": "mnist",
+            "data_name": "mnist",
             "n_classes": 8,
             "batch_size": 64,
         },
@@ -87,6 +87,7 @@ if __name__ == "__main__":
             "embed_dim": 2,
         },
     )
+    parser.link_arguments("datamodule.data_name", "pl_module.data_name", apply_on="parse")
     parser.link_arguments("datamodule.n_classes", "pl_module.n_classes", apply_on="parse")
     parser.add_class_arguments(
         Trainer,

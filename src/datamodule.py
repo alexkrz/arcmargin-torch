@@ -14,33 +14,41 @@ class ImageDataset(Dataset):
         - https://huggingface.co/datasets/uoft-cs/cifar10
     """
 
-    default_transform = transforms.Compose(
-        [
-            transforms.ToTensor(),  # Converts to tensor, scales pixel values to [0, 1]
-            transforms.Normalize((0.1307,), (0.3081,)),  # Normalize with MNIST mean & std
-        ]
-    )
-
     def __init__(
         self,
         name: str,
         split: str,
         n_classes: int = 10,
-        transform: transforms.Compose | None = default_transform,
+        transform: transforms.Compose | str | None = "default",
     ):
         super().__init__()
 
         if name == "mnist":
             self.data = datasets.load_dataset("ylecun/mnist", split=split)
             self.img_key = "image"
+            self.transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),  # Converts to tensor, scales pixel values to [0, 1]
+                    transforms.Normalize((0.1307,), (0.3081,)),  # Normalize with MNIST mean & std
+                ]
+            )
         elif name == "cifar10":
             self.data = datasets.load_dataset("uoft-cs/cifar10", split=split)
             self.img_key = "img"
+            self.transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),  # Converts to tensor, scales pixel values to [0, 1]
+                    transforms.Normalize(
+                        (0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)
+                    ),  # Normalize with CIFAR mean & std
+                ]
+            )
         else:
             raise NotImplementedError("Unkwon dataset")
         # Filter to keep only samples with label < n_classes
         self.data = self.data.filter(lambda example: example["label"] < n_classes)
-        self.transform = transform
+        if transform != "default":
+            self.transform = transform
 
     def __len__(self):
         return len(self.data)
@@ -57,7 +65,7 @@ class ImageDataset(Dataset):
 class ImageDatamodule(L.LightningDataModule):
     def __init__(
         self,
-        name: str,
+        data_name: str,
         n_classes: int = 10,
         batch_size: int = 16,
         num_workers: int = 8,
@@ -69,7 +77,7 @@ class ImageDatamodule(L.LightningDataModule):
         print(f"Preparing dataset for stage {stage}..")
         if stage in ["fit", "predict"]:
             self.dataset = ImageDataset(
-                name=self.hparams.name,
+                name=self.hparams.data_name,
                 split="train",
                 n_classes=self.hparams.n_classes,
             )

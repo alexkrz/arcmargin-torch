@@ -15,6 +15,7 @@ header_dict = {
 class ArcMarginModule(L.LightningModule):
     def __init__(
         self,
+        data_name: str = "mnist",
         header: str = "linear",
         embed_dim: int = 3,
         n_classes: int = 10,
@@ -24,7 +25,12 @@ class ArcMarginModule(L.LightningModule):
     ):
         super().__init__()
         self.save_hyperparameters()
-        self.backbone = ConvNet(embed_dim)
+        if data_name == "mnist":
+            self.backbone = ConvNet(in_channels=1, input_size=28, n_features=embed_dim)
+        elif data_name == "cifar10":
+            self.backbone = ConvNet(in_channels=3, input_size=32, n_features=embed_dim)
+        else:
+            raise NotImplementedError("Unknown data_name")
         assert header in header_dict.keys()
         kwargs = {k: v for k, v in (("s", s), ("m", m)) if v is not None}
         self.header = header_dict[header](embed_dim, n_classes, **kwargs)
