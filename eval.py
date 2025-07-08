@@ -6,10 +6,9 @@ import torch
 import torch.nn.functional as F
 from jsonargparse import CLI
 from mpl_toolkits.mplot3d import Axes3D
-from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from src.datamodule import MNISTDataset
+from src.datamodule import MNISTDatamodule
 from src.pl_module import ArcMarginModule
 
 
@@ -41,7 +40,13 @@ def main(
     chkpt_dir: str = "lightning_logs",
     header: str = "linear",
 ):
-    # TODO: Compare embeddings from different Headers on Hypersphere
+    """Compare embeddings from different Headers on Hypersphere
+
+    Args:
+        chkpt_dir (str, optional): The checkpoint root directory.
+        header (str, optional): The header name.
+    """
+
     chkpt_dir = Path(chkpt_dir) / header  # type: Path
     chkpt_files = sorted(list(chkpt_dir.rglob("*.ckpt")))
     chkpt_fp = chkpt_files[-1]
@@ -56,11 +61,14 @@ def main(
         device = torch.device("cpu")  # Default to CPU
     print("Device:", device)
 
+    # chkpt = torch.load(chkpt_fp, weights_only=True)
+    # print(chkpt.keys())
     pl_module = ArcMarginModule.load_from_checkpoint(chkpt_fp)
     backbone = pl_module.backbone
 
-    dataset = MNISTDataset(split="train")
-    dataloader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=8)
+    datamodule = MNISTDatamodule.load_from_checkpoint(chkpt_fp)
+    datamodule.setup("predict")
+    dataloader = datamodule.predict_dataloader()
 
     backbone.to(device)
     backbone.eval()
