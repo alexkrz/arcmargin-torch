@@ -6,10 +6,12 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
 
-class MNISTDataset(Dataset):
-    """MNISTDataset
+class ImageDataset(Dataset):
+    """Image Datasets
 
-    Data Card: https://huggingface.co/datasets/ylecun/mnist
+    Data Cards:
+        - https://huggingface.co/datasets/ylecun/mnist
+        - https://huggingface.co/datasets/uoft-cs/cifar10
     """
 
     default_transform = transforms.Compose(
@@ -21,13 +23,21 @@ class MNISTDataset(Dataset):
 
     def __init__(
         self,
+        name: str,
         split: str,
         n_classes: int = 10,
         transform: transforms.Compose | None = default_transform,
     ):
         super().__init__()
 
-        self.data = datasets.load_dataset("ylecun/mnist", split=split)
+        if name == "mnist":
+            self.data = datasets.load_dataset("ylecun/mnist", split=split)
+            self.img_key = "image"
+        elif name == "cifar10":
+            self.data = datasets.load_dataset("uoft-cs/cifar10", split=split)
+            self.img_key = "img"
+        else:
+            raise NotImplementedError("Unkwon dataset")
         # Filter to keep only samples with label < n_classes
         self.data = self.data.filter(lambda example: example["label"] < n_classes)
         self.transform = transform
@@ -36,7 +46,7 @@ class MNISTDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        img = self.data[idx]["image"]  # PIL Image
+        img = self.data[idx][self.img_key]  # PIL Image
         label = self.data[idx]["label"]
         if self.transform is not None:
             img = self.transform(img)
@@ -44,9 +54,10 @@ class MNISTDataset(Dataset):
         return img, label
 
 
-class MNISTDatamodule(L.LightningDataModule):
+class ImageDatamodule(L.LightningDataModule):
     def __init__(
         self,
+        name: str,
         n_classes: int = 10,
         batch_size: int = 16,
         num_workers: int = 8,
@@ -57,7 +68,11 @@ class MNISTDatamodule(L.LightningDataModule):
     def setup(self, stage):
         print(f"Preparing dataset for stage {stage}..")
         if stage in ["fit", "predict"]:
-            self.dataset = MNISTDataset(split="train", n_classes=self.hparams.n_classes)
+            self.dataset = ImageDataset(
+                name=self.hparams.name,
+                split="train",
+                n_classes=self.hparams.n_classes,
+            )
         else:
             self.dataset = None
 
@@ -79,10 +94,10 @@ class MNISTDatamodule(L.LightningDataModule):
 
 
 if __name__ == "__main__":
-    dataset = MNISTDataset(split="train", n_classes=8, transform=None)
+    dataset = ImageDataset(name="cifar10", split="train", n_classes=8, transform=None)
     print("Dataset size:", len(dataset))
     img, label = dataset[0]
     img = np.array(img)
-    np.set_printoptions(linewidth=200)  # Extend line length for print
-    print(img)
+    # np.set_printoptions(linewidth=200)  # Extend line length for print
+    print("Image shape:", img.shape)
     print("Label:", label)

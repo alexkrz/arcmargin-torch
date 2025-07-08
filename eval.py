@@ -8,7 +8,7 @@ from jsonargparse import CLI
 from mpl_toolkits.mplot3d import Axes3D
 from tqdm import tqdm
 
-from src.datamodule import MNISTDatamodule
+from src.datamodule import ImageDatamodule
 from src.pl_module import ArcMarginModule, header_dict
 
 
@@ -89,7 +89,7 @@ def main(
     pl_module = ArcMarginModule.load_from_checkpoint(chkpt_fp)
     backbone = pl_module.backbone
 
-    datamodule = MNISTDatamodule.load_from_checkpoint(chkpt_fp)
+    datamodule = ImageDatamodule.load_from_checkpoint(chkpt_fp)
     datamodule.setup("predict")
     dataloader = datamodule.predict_dataloader()
 

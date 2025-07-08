@@ -9,7 +9,7 @@ from lightning import Trainer
 from lightning.pytorch.callbacks import ModelCheckpoint, TQDMProgressBar
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
 
-from src.datamodule import MNISTDatamodule
+from src.datamodule import ImageDatamodule
 from src.pl_module import ArcMarginModule
 
 
@@ -31,7 +31,7 @@ def main(parser: jsonargparse.ArgumentParser):
     cfg = parser.parse_args()
     setup_seed(cfg.seed)
 
-    datamodule = MNISTDatamodule(**cfg.datamodule)
+    datamodule = ImageDatamodule(**cfg.datamodule)
 
     pl_module = ArcMarginModule(**cfg.pl_module)
 
@@ -71,9 +71,10 @@ if __name__ == "__main__":
     parser.add_argument("--config", action=ActionConfigFile)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_class_arguments(
-        MNISTDatamodule,
+        ImageDatamodule,
         "datamodule",
         default={
+            "name": "mnist",
             "n_classes": 8,
             "batch_size": 64,
         },
