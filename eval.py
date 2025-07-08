@@ -9,7 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from tqdm import tqdm
 
 from src.datamodule import MNISTDatamodule
-from src.pl_module import ArcMarginModule
+from src.pl_module import ArcMarginModule, header_dict
 
 
 def plot_3d(embeds, labels, fig_path="./example.png"):
@@ -67,6 +67,7 @@ def main(
         header (str, optional): The header name.
     """
 
+    assert header in header_dict.keys(), "Unknown header"
     chkpt_dir = Path(chkpt_dir) / header  # type: Path
     if version is not None:
         chkpt_dir = chkpt_dir / f"version_{version}"
@@ -111,8 +112,10 @@ def main(
     print(feats.shape)
     print(labels.shape)
 
-    # plot_3d(feats, labels, fig_path=f"results/{header}_3d.png")
-    plot_2d(feats, labels, fig_path=f"results/{header}_2d.png")
+    results_dir = Path("./results")
+    results_dir.mkdir(exist_ok=True)
+    # plot_3d(feats, labels, fig_path=results_dir / f"{header}.png")
+    plot_2d(feats, labels, fig_path=results_dir / f"{header}.png")
 
 
 if __name__ == "__main__":
