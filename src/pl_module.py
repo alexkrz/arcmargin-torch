@@ -26,9 +26,9 @@ class ArcMarginModule(L.LightningModule):
         super().__init__()
         self.save_hyperparameters()
         if data_name == "mnist":
-            self.backbone = ConvNet(in_channels=1, input_size=28, n_features=embed_dim)
+            self.backbone = ConvNet(in_channels=1, n_features=embed_dim)
         elif data_name == "cifar10":
-            self.backbone = ConvNet(in_channels=3, input_size=32, n_features=embed_dim)
+            self.backbone = ConvNet(in_channels=3, n_features=embed_dim)
         else:
             raise NotImplementedError("Unknown data_name")
         assert header in header_dict.keys()
