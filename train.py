@@ -83,6 +83,7 @@ if __name__ == "__main__":
         "pl_module",
         default={
             "header": "linear",
+            "embed_dim": 2,
         },
     )
     parser.link_arguments("datamodule.n_classes", "pl_module.n_classes", apply_on="parse")

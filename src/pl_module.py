@@ -18,13 +18,16 @@ class ArcMarginModule(L.LightningModule):
         header: str = "linear",
         embed_dim: int = 3,
         n_classes: int = 10,
+        s: float | None = None,
+        m: float | None = None,
         lr: float = 1e-4,
     ):
         super().__init__()
         self.save_hyperparameters()
         self.backbone = ConvNet(embed_dim)
         assert header in header_dict.keys()
-        self.header = header_dict[header](embed_dim, n_classes)
+        kwargs = {k: v for k, v in (("s", s), ("m", m)) if v is not None}
+        self.header = header_dict[header](embed_dim, n_classes, **kwargs)
 
         self.criterion = torch.nn.CrossEntropyLoss()
 

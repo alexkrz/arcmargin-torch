@@ -12,7 +12,7 @@ from src.datamodule import MNISTDatamodule
 from src.pl_module import ArcMarginModule
 
 
-def plot(embeds, labels, fig_path="./example.png"):
+def plot_3d(embeds, labels, fig_path="./example.png"):
     fig = plt.figure(figsize=(10, 10))
     ax: Axes3D = fig.add_subplot(111, projection="3d")
 
@@ -36,9 +36,29 @@ def plot(embeds, labels, fig_path="./example.png"):
     plt.savefig(fig_path)
 
 
+def plot_2d(embeds, labels, fig_path="./example.png"):
+    """
+    Plots 2D embeddings on the unit circle, colored by label.
+    """
+    fig, ax = plt.subplots(figsize=(8, 8))
+
+    # Draw unit circle
+    circle = plt.Circle((0, 0), 1, color="gray", fill=False, linestyle="--", linewidth=2)
+    ax.add_artist(circle)
+
+    scatter = ax.scatter(embeds[:, 0], embeds[:, 1], c=labels, s=20, cmap="tab10", alpha=0.8)
+    ax.set_xlim([-1.1, 1.1])
+    ax.set_ylim([-1.1, 1.1])
+    ax.set_aspect("equal")
+    plt.tight_layout()
+    plt.savefig(fig_path)
+    plt.close(fig)
+
+
 def main(
     chkpt_dir: str = "lightning_logs",
     header: str = "linear",
+    version: int | None = None,
 ):
     """Compare embeddings from different Headers on Hypersphere
 
@@ -48,6 +68,8 @@ def main(
     """
 
     chkpt_dir = Path(chkpt_dir) / header  # type: Path
+    if version is not None:
+        chkpt_dir = chkpt_dir / f"version_{version}"
     chkpt_files = sorted(list(chkpt_dir.rglob("*.ckpt")))
     chkpt_fp = chkpt_files[-1]
     print("Chkpt:", str(chkpt_fp))
@@ -89,7 +111,8 @@ def main(
     print(feats.shape)
     print(labels.shape)
 
-    plot(feats, labels, fig_path=f"results/{header}.png")
+    # plot_3d(feats, labels, fig_path=f"results/{header}_3d.png")
+    plot_2d(feats, labels, fig_path=f"results/{header}_2d.png")
 
 
 if __name__ == "__main__":

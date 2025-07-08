@@ -69,7 +69,7 @@ class CosFaceHeader(ArcMarginHeader):
     Reference: https://ieeexplore.ieee.org/document/8578650 (CVPR, 2018)
     """
 
-    def __init__(self, in_features, out_features, s=1, m=0.35):
+    def __init__(self, in_features, out_features, s=1.0, m=0.35):
         super().__init__(in_features=in_features, out_features=out_features, s=s, m3=m)
 
 
@@ -79,7 +79,7 @@ class SphereFaceHeader(ArcMarginHeader):
     Reference: https://ieeexplore.ieee.org/document/8100196 (CVPR, 2017)
     """
 
-    def __init__(self, in_features, out_features, m=4):
+    def __init__(self, in_features, out_features, m=4.0):
         super().__init__(in_features=in_features, out_features=out_features, s=1, m1=m)
 
 
