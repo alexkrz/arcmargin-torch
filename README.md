@@ -54,25 +54,25 @@ Currently, our results for training and evaluating on the MNIST dataset with a 2
 - Linear Header:
 
     <div style="text-align: left;">
-        <img src="./assets/linear.png" alt="Linear Header" style="width:400">
+        <img src="./assets/linear.png" alt="Linear Header" width="300">
     </div>
 
 - ArcFace Header:
 
     <div style="text-align: left;">
-        <img src="./assets/arcface.png" alt="ArcFace Header" style="width:400">
+        <img src="./assets/arcface.png" alt="ArcFace Header" width="300">
     </div>
 
 - CosFace Header:
 
     <div style="text-align: left;">
-        <img src="./assets/cosface.png" alt="CosFace Header" style="width:400">
+        <img src="./assets/cosface.png" alt="CosFace Header" width="300">
     </div>
 
 - SphereFace Header:
 
     <div style="text-align: left;">
-        <img src="./assets/sphereface.png" alt="SphereFace Header" style="width:400">
+        <img src="./assets/sphereface.png" alt="SphereFace Header" width="300">
     </div>
 
 ## Todos
