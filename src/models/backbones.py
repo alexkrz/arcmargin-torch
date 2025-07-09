@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class LeNet(nn.Module):
-    """LeNet
+class LeNetExt(nn.Module):
+    """LeNet with ReLU activation function
 
     Adapted from: https://docs.pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
     """
@@ -90,10 +90,10 @@ if __name__ == "__main__":
 
     # For MNIST (1 channel)
     print("Backbone MNIST:")
-    backbone_mnist = ConvNet(in_channels=1)
+    backbone_mnist = LeNetExt(in_channels=1, input_size=28)
     summary(backbone_mnist, input_size=(1, 1, 28, 28))
 
     # For CIFAR (3 channels)
     print("Backbone CIFAR10:")
-    backbone_cifar = ConvNet(in_channels=3)
+    backbone_cifar = LeNetExt(in_channels=3, input_size=32)
     summary(backbone_cifar, input_size=(1, 3, 32, 32))
