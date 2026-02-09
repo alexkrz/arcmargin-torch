@@ -1,0 +1,19 @@
+[project]
+name = "arcmargin-torch"
+version = "0.1.0"
+description = "Comparison of margin-based loss functions (ArcFace, CosFace, SphereFace)"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "torch==2.8.*",
+    "torchvision==0.23.*",
+    "ipykernel>=6.29.0",
+    "ipywidgets>=8.1.0",
+    "pre-commit>=4.2.0",
+    "jsonargparse[signatures,omegaconf]>=4.38.0",
+    "matplotlib>=3.10.0",
+    "torchinfo>=1.8.0",
+    "datasets>=3.6.0",
+    "lightning>=2.5.0",
+    "tensorboard>=2.19.0",
+]
