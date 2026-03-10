@@ -22,12 +22,12 @@ This repository is inspired by <https://github.com/cvqluu/Angular-Penalty-Softma
 ## Setup
 
 We recommend [miniforge](https://conda-forge.org/download/) to set up your python environment.
-In case VSCode does not detect your conda environments, install [nb_conda](https://github.com/conda-forge/nb_conda-feedstock) in the base environment.
+Then [uv](https://docs.astral.sh/uv/) can be used to install the requirements from `requirements.txt`.
 
 ```bash
-conda env create -n $YOUR_ENV_NAME -f environment.yml
+conda create -n $YOUR_ENV_NAME python=3.12
 conda activate $YOUR_ENV_NAME
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 pre-commit install
 ```
 
