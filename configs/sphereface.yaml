@@ -5,11 +5,11 @@ datamodule:
   batch_size: 512
   num_workers: 8
 pl_module:
-  header: cosface
+  header: sphereface
   embed_dim: 3
   lr: 0.01
   s: 1.0
-  m: 0.35
+  m: 2.0
 trainer:
   accelerator: auto
   strategy: auto

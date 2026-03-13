@@ -88,8 +88,8 @@ class SphereFaceHeader(ArcMarginHeader):
     Reference: https://ieeexplore.ieee.org/document/8100196 (CVPR, 2017)
     """
 
-    def __init__(self, in_features, out_features, m=4.0):
-        super().__init__(in_features=in_features, out_features=out_features, s=1, m1=m)
+    def __init__(self, in_features, out_features, s=None, m=4.0):
+        super().__init__(in_features=in_features, out_features=out_features, s=1.0, m1=m)
 
     @property
     def m(self):
@@ -99,7 +99,7 @@ class SphereFaceHeader(ArcMarginHeader):
 class LinearHeader(nn.Module):
     """LinearHeader class."""
 
-    def __init__(self, in_features, out_features):
+    def __init__(self, in_features, out_features, s=None, m=None):
         super().__init__()
 
         self.in_features = in_features

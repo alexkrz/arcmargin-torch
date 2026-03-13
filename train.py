@@ -86,6 +86,8 @@ if __name__ == "__main__":
             "header": "linear",
             "embed_dim": 3,
             "lr": 0.01,
+            # "s": 1.0,
+            # "m": 3.0,
         },
     )
     parser.link_arguments("datamodule.data_name", "pl_module.data_name", apply_on="parse")

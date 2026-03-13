@@ -19,9 +19,9 @@ class ArcMarginModule(L.LightningModule):
         header: str = "linear",
         embed_dim: int = 3,
         n_classes: int = 10,
+        lr: float = 0.01,
         s: float | None = None,
         m: float | None = None,
-        lr: float = 0.01,
     ):
         super().__init__()
         if data_name == "mnist":

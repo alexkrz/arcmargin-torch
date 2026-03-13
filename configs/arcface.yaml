@@ -8,6 +8,8 @@ pl_module:
   header: arcface
   embed_dim: 3
   lr: 0.01
+  s: 1.0
+  m: 0.5
 trainer:
   accelerator: auto
   strategy: auto

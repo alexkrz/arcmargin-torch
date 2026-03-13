@@ -81,11 +81,12 @@ Our results for training and evaluating on the MNIST dataset with a 3-dimensiona
         <img src="./assets/sphereface.png" alt="SphereFace Header" width="300">
     </div>
 
+    Config: [configs/sphereface.yaml](/configs/sphereface.yaml)
+
 ## Observations
 
 The training with the margin-based losses is quite sensitive to choosing an appropriate combination of batch-size and learning-rate.
 
 ## Todos
 
-- [ ] Find a working configuration for SphereFace
 - [ ] Find a working parameter set for training on Cifar-10
