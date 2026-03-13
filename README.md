@@ -49,7 +49,7 @@ python eval.py --header $HEADER_NAME
 
 ## Results
 
-Currently, our results for training and evaluating on the MNIST dataset with a 2-dimensional embedding vector look as follows:
+Our results for training and evaluating on the MNIST dataset with a 3-dimensional embedding vector look as follows. We also provide the corresponding training configs for reproducibility.
 
 - Linear Header:
 
@@ -57,11 +57,15 @@ Currently, our results for training and evaluating on the MNIST dataset with a 2
         <img src="./assets/linear.png" alt="Linear Header" width="300">
     </div>
 
+    Config: [configs/linear.yaml](/configs/linear.yaml)
+
 - ArcFace Header:
 
     <div style="text-align: left;">
         <img src="./assets/arcface.png" alt="ArcFace Header" width="300">
     </div>
+
+    Config: [configs/arcface.yaml](/configs/arcface.yaml)
 
 - CosFace Header:
 
@@ -69,14 +73,19 @@ Currently, our results for training and evaluating on the MNIST dataset with a 2
         <img src="./assets/cosface.png" alt="CosFace Header" width="300">
     </div>
 
+    Config: [configs/cosface.yaml](/configs/cosface.yaml)
+
 - SphereFace Header:
 
     <div style="text-align: left;">
         <img src="./assets/sphereface.png" alt="SphereFace Header" width="300">
     </div>
 
+## Observations
+
+The training with the margin-based losses is quite sensitive to choosing an appropriate combination of batch-size and learning-rate.
+
 ## Todos
 
-- [ ] The margin for ArcFace and CosFace should be better visible compared to the Linear Header
-- [ ] Fix SphereFace such that the embeddings are also fully distributed on the unit circle
-- [ ] Add interactive 3D visualizations to visualize 3-dimensional embedding vectors
+- [ ] Find a working configuration for SphereFace
+- [ ] Find a working parameter set for training on Cifar-10

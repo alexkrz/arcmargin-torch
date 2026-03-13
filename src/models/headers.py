@@ -59,8 +59,13 @@ class ArcFaceHeader(ArcMarginHeader):
     Reference: https://ieeexplore.ieee.org/document/8953658 (CVPR, 2019)
     """
 
-    def __init__(self, in_features, out_features, s=64.0, m=0.5):
+    # NOTE: The original ArcFace scaling factor is 64.0, but we set it to 1.0 to stabilize tranining on this simple dataset
+    def __init__(self, in_features, out_features, s=1.0, m=0.5):
         super().__init__(in_features=in_features, out_features=out_features, s=s, m2=m)
+
+    @property
+    def m(self):
+        return self.m2
 
 
 class CosFaceHeader(ArcMarginHeader):
@@ -72,6 +77,10 @@ class CosFaceHeader(ArcMarginHeader):
     def __init__(self, in_features, out_features, s=1.0, m=0.35):
         super().__init__(in_features=in_features, out_features=out_features, s=s, m3=m)
 
+    @property
+    def m(self):
+        return self.m3
+
 
 class SphereFaceHeader(ArcMarginHeader):
     """
@@ -81,6 +90,10 @@ class SphereFaceHeader(ArcMarginHeader):
 
     def __init__(self, in_features, out_features, m=4.0):
         super().__init__(in_features=in_features, out_features=out_features, s=1, m1=m)
+
+    @property
+    def m(self):
+        return self.m1
 
 
 class LinearHeader(nn.Module):
@@ -93,6 +106,14 @@ class LinearHeader(nn.Module):
         self.out_features = out_features
 
         self.linear = nn.Linear(in_features=in_features, out_features=out_features, bias=False)
+
+    @property
+    def s(self):
+        return None
+
+    @property
+    def m(self):
+        return None
 
     def forward(self, input, label):
         return self.linear(input)

@@ -114,8 +114,12 @@ def main(
 
     results_dir = Path("./results")
     results_dir.mkdir(exist_ok=True)
-    # plot_3d(feats, labels, fig_path=results_dir / f"{header}.png")
-    plot_2d(feats, labels, fig_path=results_dir / f"{header}.png")
+    if feats.shape[1] == 2:
+        plot_2d(feats, labels, fig_path=results_dir / f"{header}.png")
+    elif feats.shape[1] == 3:
+        plot_3d(feats, labels, fig_path=results_dir / f"{header}.png")
+    else:
+        raise RuntimeError(f"Plotting features with shape {feats.shape} is not supported")
 
 
 if __name__ == "__main__":

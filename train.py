@@ -40,7 +40,7 @@ def main(parser: jsonargparse.ArgumentParser):
     cp_callback = ModelCheckpoint(
         save_weights_only=True,
         save_last=None,
-        monitor="loss",
+        monitor="loss_epoch",
         mode="min",
         # every_n_train_steps=50,  # By default lightning only monitors the metric per epoch
         filename="{epoch}_{step}_{loss:.4f}",
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         default={
             "data_name": "mnist",
             "n_classes": 8,
-            "batch_size": 64,
+            "batch_size": 512,
         },
     )
     parser.add_class_arguments(
@@ -84,7 +84,8 @@ if __name__ == "__main__":
         "pl_module",
         default={
             "header": "linear",
-            "embed_dim": 2,
+            "embed_dim": 3,
+            "lr": 0.01,
         },
     )
     parser.link_arguments("datamodule.data_name", "pl_module.data_name", apply_on="parse")
@@ -96,7 +97,7 @@ if __name__ == "__main__":
             "precision": "32-true",  # Important to use full precision!
             "log_every_n_steps": 50,
             "enable_checkpointing": True,
-            "max_epochs": 15,
+            "max_epochs": 20,
         },
     )
 

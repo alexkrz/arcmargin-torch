@@ -21,19 +21,24 @@ class ArcMarginModule(L.LightningModule):
         n_classes: int = 10,
         s: float | None = None,
         m: float | None = None,
-        lr: float = 1e-4,
+        lr: float = 0.01,
     ):
         super().__init__()
-        self.save_hyperparameters()
         if data_name == "mnist":
-            self.backbone = LeNetExt(in_channels=1, input_size=28, n_features=embed_dim)
+            # self.backbone = LeNetExt(in_channels=1, input_size=28, n_features=embed_dim)
+            self.backbone = ConvNet(in_channels=1, n_features=embed_dim)
         elif data_name == "cifar10":
-            self.backbone = LeNetExt(in_channels=3, input_size=32, n_features=embed_dim)
+            # self.backbone = LeNetExt(in_channels=3, input_size=32, n_features=embed_dim)
+            self.backbone = ConvNet(in_channels=3, n_features=embed_dim)
         else:
             raise NotImplementedError("Unknown data_name")
         assert header in header_dict.keys()
         kwargs = {k: v for k, v in (("s", s), ("m", m)) if v is not None}
         self.header = header_dict[header](embed_dim, n_classes, **kwargs)
+        s = self.header.s
+        m = self.header.m
+
+        self.save_hyperparameters()
 
         self.criterion = torch.nn.CrossEntropyLoss()
 
@@ -50,7 +55,7 @@ class ArcMarginModule(L.LightningModule):
         # logits vector describes the probability for each image to belong to one of n_classes
         loss = self.criterion(logits, targets)
         optimizer_lr = self.optimizers().optimizer.param_groups[0]["lr"]
-        self.log("loss", loss, prog_bar=True)
+        self.log("loss", loss, prog_bar=True, on_epoch=True)
         self.log("optimizer_lr", optimizer_lr)
         self.log("max_ampl", max_ampl.item())
         return loss
@@ -61,4 +66,5 @@ class ArcMarginModule(L.LightningModule):
             params=self.parameters(),
             lr=self.hparams.lr,
         )
-        return optimizer
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=8, gamma=0.25)
+        return {"optimizer": optimizer, "lr_scheduler": scheduler}
